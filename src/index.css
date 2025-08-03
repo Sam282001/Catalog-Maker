@@ -1,0 +1,70 @@
+@import "tailwindcss";
+@plugin "flowbite-react/plugin/tailwindcss";
+@source "../.flowbite-react/class-list.json";
+
+/* Carousel */
+/* Carousel Styles */
+@keyframes autoRun3d {
+  from {
+    transform: perspective(800px) rotateY(-360deg);
+  }
+  to {
+    transform: perspective(800px) rotateY(0deg);
+  }
+}
+
+@keyframes animateBrightness {
+  10% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(0.1);
+  }
+  90% {
+    filter: brightness(1);
+  }
+}
+
+/* This is the main container for our carousel component */
+.carousel-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 250px;
+  margin-bottom: 2rem;
+}
+
+.card-3d {
+  position: relative;
+  width: 600px;
+  height: 300px;
+  transform-style: preserve-3d;
+  transform: perspective(800px);
+  animation: autoRun3d 20s linear infinite;
+  will-change: transform;
+}
+
+.card-3d-item {
+  position: absolute;
+  width: 150px;
+  height: 210px;
+  border: solid 2px lightgray;
+  border-radius: 0.5rem;
+  top: 50%;
+  left: 50%;
+  transform-origin: center center;
+  animation: animateBrightness 20s linear infinite;
+  transition-duration: 200ms;
+  will-change: transform, filter;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-3d:hover {
+  animation-play-state: paused !important;
+}
+
+.card-3d:hover .card-3d-item {
+  animation-play-state: paused !important;
+}
