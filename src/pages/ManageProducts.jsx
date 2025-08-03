@@ -20,6 +20,8 @@ import {
   TextInput,
   Textarea,
 } from "flowbite-react";
+import useDebounce from "../hooks/useDebounce";
+import SearchBar from "../components/SearchBar";
 
 const ManageProducts = () => {
   const { user } = useAuth();
@@ -28,35 +30,53 @@ const ManageProducts = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // State for edit modal
+  //State for Search and Filtering
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategory, setFilterCategory] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500); // Debounce for 500ms
+
+  // Temporary state for the modal's selection
+  const [tempFilterCategory, setTempFilterCategory] = useState("");
+  const [showFilterModal, setShowFilterModal] = useState(false);
+
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchProductsAndCategories = async () => {
       setIsLoading(true);
+      setError(""); // Reset error on new fetch
       try {
-        // First, fetch all categories to map their names later
+        // Fetch Categories for the filter dropdown AND for mapping names
         const categoryRes = await databases.listDocuments(
           appwriteConfig.databaseId,
           appwriteConfig.categoriesCollectionId,
           [Query.equal("user_id", user.$id)]
         );
+
         const categoryMap = categoryRes.documents.reduce((map, cat) => {
           map[cat.$id] = cat.name;
           return map;
         }, {});
-
         setCategories(categoryRes.documents);
 
-        // Then, fetch all products
+        // Dynamically build the query for products
+        const queries = [Query.equal("user_id", user.$id)];
+        if (debouncedSearchTerm) {
+          queries.push(Query.search("name", debouncedSearchTerm));
+        }
+        if (filterCategory) {
+          queries.push(Query.equal("category_id", filterCategory));
+        }
+
+        // Fetch the products using the dynamic query
         const productRes = await databases.listDocuments(
           appwriteConfig.databaseId,
           appwriteConfig.productsCollectionId,
-          [Query.equal("user_id", user.$id)]
+          queries
         );
 
-        // Manually construct the direct URL to the raw file
+        // Process the products with their image URLs and category names
         const productsWithDetails = productRes.documents.map((product) => {
           const imageUrl = `${appwriteConfig.endpoint}/storage/buckets/${appwriteConfig.storageBucketId}/files/${product.image_id}/view?project=${appwriteConfig.projectId}`;
           return {
@@ -68,15 +88,15 @@ const ManageProducts = () => {
 
         setProducts(productsWithDetails);
       } catch (err) {
-        console.error("Failed to fetch products: ", err);
-        setError("Failed to load products");
+        console.error("Failed to fetch data:", err);
+        setError("Failed to load data.");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchProducts();
-  }, [user.$id]);
+    fetchProductsAndCategories();
+  }, [user.$id, debouncedSearchTerm, filterCategory]); // Re-fetch when user, search, or filter changes
 
   const handleDelete = async (productId, imageId) => {
     if (!window.confirm("Are you sure you want to delete this product?")) {
@@ -148,6 +168,11 @@ const ManageProducts = () => {
     }
   };
 
+  const handleApplyFilters = () => {
+    setFilterCategory(tempFilterCategory); // Apply the filter
+    setShowFilterModal(false); // Close the modal
+  };
+
   if (isLoading) {
     return (
       <div className="p-8 text-center">
@@ -157,10 +182,20 @@ const ManageProducts = () => {
   }
 
   return (
-    <div className="p-4 sm:p-8">
+    <div className="p-4 sm:p-8 min-h-screen">
       <div className="flex flex-col items-center">
-        <h1 className="mb-5 text-4xl font-bold text-black">Manage Products</h1>
+        <h1 className="mb-5 text-4xl font-bold text-white">Manage Products</h1>
       </div>
+
+      <SearchBar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        onFilterClick={() => {
+          setTempFilterCategory(filterCategory);
+          setShowFilterModal(true);
+        }}
+      />
+
       {error && (
         <Alert color="failure" onDismiss={() => setError("")} className="mb-4">
           {error}
@@ -296,6 +331,31 @@ const ManageProducts = () => {
               </div>
             </form>
           )}
+        </ModalBody>
+      </Modal>
+
+      {/* Filter Modal */}
+      <Modal show={showFilterModal} onClose={() => setShowFilterModal(false)}>
+        <ModalHeader>Filter Products</ModalHeader>
+        <ModalBody>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="tempFilterCategory" value="Filter by Category" />
+              <Select
+                id="tempFilterCategory"
+                value={tempFilterCategory}
+                onChange={(e) => setTempFilterCategory(e.target.value)}
+              >
+                <option value="">All Categories</option>
+                {categories.map((cat) => (
+                  <option key={cat.$id} value={cat.$id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <Button onClick={handleApplyFilters}>Apply</Button>
+          </div>
         </ModalBody>
       </Modal>
     </div>

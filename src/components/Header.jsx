@@ -12,6 +12,7 @@ import {
 } from "flowbite-react";
 import { useAuth } from "../context/AuthContext";
 import { account } from "../lib/appwrite";
+import AnimatedNavLink from "./AnimatedNavLink";
 
 const Header = () => {
   const { user, setUser } = useAuth();
@@ -28,9 +29,14 @@ const Header = () => {
   };
 
   return (
-    <Navbar fluid rounded>
+    <Navbar fluid className="dark !bg-black">
       <NavbarBrand as={Link} to="/">
-        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+        <img
+          src="/logo-trnt.png"
+          className="mr-3 h-11"
+          alt="Catalog Maker Logo"
+        />
+        <span className="self-center whitespace-nowrap text-xl font-semibold text-white">
           Catalog Maker
         </span>
       </NavbarBrand>
@@ -39,14 +45,13 @@ const Header = () => {
           arrowIcon={false}
           inline
           label={
-            // This div looks like a button but isn't one, avoiding the error.
-            <div className="rounded-full border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
+            <div className="rounded-full border px-4 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none border-gray-600 text-white">
               {user?.name || "Account"}
             </div>
           }
         >
           <DropdownHeader>
-            <span className="block text-sm">{user?.name}</span>
+            {/* <span className="block text-sm">{user?.name}</span> */}
             <span className="block truncate text-sm font-medium">
               {user?.email}
             </span>
@@ -56,10 +61,8 @@ const Header = () => {
         <NavbarToggle />
       </div>
       <NavbarCollapse>
-        <NavbarLink as={Link} to="/" active>
-          Home
-        </NavbarLink>
-        {/* We will add more links here later */}
+        <AnimatedNavLink to="/" text="Home" />
+        {/*add more links here */}
       </NavbarCollapse>
     </Navbar>
   );

@@ -148,7 +148,7 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="p-4 sm:p-8 flex flex-col items-center">
+    <div className="p-4 sm:p-8 flex flex-col items-center min-h-screen">
       <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-black dark:bg-white">
         Add a New Product
       </h1>

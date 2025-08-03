@@ -7,6 +7,7 @@ import { FaPlus, FaTasks, FaFilePdf, FaSave, FaChartPie } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { appwriteConfig, databases } from "../lib/appwrite";
 import { Query } from "appwrite";
+import AnimatedDashboardCard from "../components/AnimatedDashboardCard";
 
 const Home = () => {
   const { user } = useAuth();
@@ -57,66 +58,115 @@ const Home = () => {
     fetchProductImages();
   }, [user.$id]);
 
+  // const dashboardItems = [
+  //   {
+  //     title: "Dashboard",
+  //     description: "View analytics and stats about your inventory.",
+  //     link: "/dashboard",
+  //     icon: (
+  //       <FaChartPie
+  //         size={28}
+  //         className="mb-2 text-gray-500 dark:text-gray-400"
+  //       />
+  //     ),
+  //   },
+  //   {
+  //     title: "Add Product",
+  //     description: "Add a new product",
+  //     link: "/add-product",
+  //     icon: (
+  //       <FaPlus size={28} className="mb-2 text-gray-500 dark:text-gray-400" />
+  //     ),
+  //   },
+  //   {
+  //     title: "Manage Product",
+  //     description: "View, edit, or delete your existing products.",
+  //     link: "/manage-products",
+  //     icon: (
+  //       <FaTasks size={28} className="mb-2 text-gray-500 dark:text-gray-400" />
+  //     ),
+  //   },
+  //   {
+  //     title: "Create Catalog",
+  //     description: "Select products to generate a new PDF catalog.",
+  //     link: "/create-catalog",
+  //     icon: (
+  //       <FaFilePdf
+  //         size={28}
+  //         className="mb-2 text-gray-500 dark:text-gray-400"
+  //       />
+  //     ),
+  //   },
+  // ];
+
   const dashboardItems = [
     {
       title: "Dashboard",
       description: "View analytics and stats about your inventory.",
       link: "/dashboard",
-      icon: (
-        <FaChartPie
-          size={28}
-          className="mb-2 text-gray-500 dark:text-gray-400"
-        />
-      ),
+      icon: <FaChartPie size={40} />,
+      hoverBg: "#e0f2fe", // light blue
+      hoverText: "#0ea5e9", // sky blue
     },
     {
       title: "Add Product",
-      description: "Add a new product",
+      description: "Add a new product to your inventory.",
       link: "/add-product",
-      icon: (
-        <FaPlus size={28} className="mb-2 text-gray-500 dark:text-gray-400" />
-      ),
+      icon: <FaPlus size={40} />,
+      hoverBg: "#dcfce7", // light green
+      hoverText: "#22c55e", // green
     },
     {
-      title: "Manage Product",
+      title: "Manage Products",
       description: "View, edit, or delete your existing products.",
       link: "/manage-products",
-      icon: (
-        <FaTasks size={28} className="mb-2 text-gray-500 dark:text-gray-400" />
-      ),
+      icon: <FaTasks size={40} />,
+      hoverBg: "#fef3c7", // light yellow
+      hoverText: "#f59e0b", // amber
     },
     {
       title: "Create Catalog",
       description: "Select products to generate a new PDF catalog.",
       link: "/create-catalog",
-      icon: (
-        <FaFilePdf
-          size={28}
-          className="mb-2 text-gray-500 dark:text-gray-400"
-        />
-      ),
+      icon: <FaFilePdf size={40} />,
+      hoverBg: "#fee2e2", // light red
+      hoverText: "#ef4444", // red
     },
   ];
 
   return (
-    <div className="p-4 sm:p-8">
+    <div className="p-4 sm:p-8 min-h-screen bg-black">
       {!isLoading && <ProductCarousel images={carouselImages} />}
-      <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
+      <h1 className="mb-6 text-3xl font-bold text-white">
         Welcome back, {user?.name}
       </h1>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {/* <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {dashboardItems.map((item) => (
           <Link to={item.link} key={item.title}>
-            <Card className="h-full hover:bg-gray-100 dark:hover:bg-gray-700">
+            <Card className="h-full !bg-green-500 hover:bg-gray-700">
               {item.icon}
-              <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+              <h2 className="text-2xl font-bold tracking-tight text-white">
                 {item.title}
               </h2>
               <p className="font-normal text-gray-700 dark:text-gray-400">
                 {item.description}
               </p>
             </Card>
+          </Link>
+        ))}
+      </div> */}
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {dashboardItems.map((item) => (
+          <Link to={item.link} key={item.title}>
+            <AnimatedDashboardCard
+              icon={item.icon}
+              title={item.title}
+              description={item.description}
+              hoverBg={item.hoverBg}
+              hoverText={item.hoverText}
+            />
           </Link>
         ))}
       </div>

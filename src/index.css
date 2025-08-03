@@ -25,7 +25,7 @@
   }
 }
 
-/* This is the main container for our carousel component */
+/* main carousel component styling */
 .carousel-container {
   display: flex;
   justify-content: center;
@@ -67,4 +67,163 @@
 
 .card-3d:hover .card-3d-item {
   animation-play-state: paused !important;
+}
+
+/* Animated Nav Button Styles */
+.animated-button {
+  margin: 0;
+  height: auto;
+  background: transparent;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  --border-right: 6px;
+  --text-stroke-color: rgba(255, 255, 255, 0.6);
+  --animation-color: #37ff8b;
+  --fs-size: 1em; /* Adjusted font size to better fit the navbar */
+  letter-spacing: 3px;
+  text-decoration: none;
+  font-size: var(--fs-size);
+  font-family: "Arial";
+  position: relative;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--text-stroke-color);
+}
+
+.animated-button .hover-text {
+  position: absolute;
+  box-sizing: border-box;
+  color: var(--animation-color);
+  width: 0%;
+  inset: 0;
+  border-right: var(--border-right) solid var(--animation-color);
+  overflow: hidden;
+  transition: 0.5s;
+  -webkit-text-stroke: 1px var(--animation-color);
+}
+
+.animated-button:hover .hover-text {
+  width: 100%;
+  filter: drop-shadow(0 0 23px var(--animation-color));
+}
+
+/* Animated Dashboard Card Styles */
+.animated-card {
+  --bg: #4dffbe; /* Default background */
+  width: 100%;
+  height: 100%; /* Ensure it fills the grid cell */
+  text-align: center;
+  background: var(--bg);
+  padding: 1.5em;
+  border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s cubic-bezier(0.6, 0.4, 0, 1), transform 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  color: black;
+}
+
+.animated-card .card__body {
+  color: #464853;
+  line-height: 1.5em;
+  font-size: 1em;
+}
+
+.animated-card > :not(span) {
+  transition: 0.3s cubic-bezier(0.6, 0.4, 0, 1);
+}
+
+.animated-card > strong {
+  display: block;
+  font-size: 1.4rem;
+  letter-spacing: -0.035em;
+}
+
+.animated-card span {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--hover-text);
+  border-radius: 5px;
+  font-weight: bold;
+  top: 100%;
+  transition: all 0.3s cubic-bezier(0.6, 0.4, 0, 1);
+}
+
+.animated-card:hover span {
+  top: 0;
+  font-size: 1.2em;
+}
+
+.animated-card:hover {
+  background: var(--hover-bg);
+}
+
+.animated-card:hover > div,
+.animated-card:hover > strong {
+  opacity: 0;
+}
+
+/* Stylish Search Bar Styles */
+.search-bar-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.search-bar-main {
+  position: relative;
+  border: 1px solid white; /* The new white border */
+  border-radius: 10px;
+}
+
+.search-input {
+  background-color: transparent; /* Changed to transparent */
+  border: none;
+  width: 301px;
+  height: 56px;
+  border-radius: 10px;
+  color: white;
+  padding-inline: 59px;
+  font-size: 18px;
+}
+
+.search-input::placeholder {
+  color: #c0b9c0;
+}
+.search-input:focus {
+  outline: none;
+}
+
+#search-icon {
+  position: absolute;
+  left: 20px;
+  top: 15px;
+  pointer-events: none;
+}
+
+#filter-icon-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 38px;
+  border-radius: 10px;
+  background-color: #1f2937; /* A dark gray background */
+  border: none;
+  cursor: pointer;
 }
