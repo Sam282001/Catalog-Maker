@@ -14,6 +14,7 @@ import {
   TextInput,
   Textarea,
 } from "flowbite-react";
+import AnimatedNavLink from "../components/AnimatedNavLink";
 
 const AddProduct = () => {
   const { user } = useAuth();
@@ -30,6 +31,7 @@ const AddProduct = () => {
   const [categories, setCategories] = useState([]);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
+  const [showManageModel, setShowManageModel] = useState(false);
 
   //State for UI feedback
   const [isLoading, setIsLoading] = useState(false);
@@ -82,6 +84,33 @@ const AddProduct = () => {
       setError("Failed to create category");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this category? Products using it will no longer have a category."
+      )
+    ) {
+      return;
+    }
+
+    try {
+      //1. Delete the document from Appwrite collection
+      await databases.deleteDocument(
+        appwriteConfig.databaseId,
+        appwriteConfig.categoriesCollectionId,
+        categoryId
+      );
+
+      //2. Update the local state to instantly reflect the change
+      setCategories((prevCategories) =>
+        prevCategories.filter((cat) => cat.$id !== categoryId)
+      );
+    } catch (err) {
+      console.error("Failed to Delete Catgeory: ", err);
+      setError("Failed to delete category. It might be in use");
     }
   };
 
@@ -149,9 +178,9 @@ const AddProduct = () => {
 
   return (
     <div className="p-4 sm:p-8 flex flex-col items-center min-h-screen">
-      <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-black dark:bg-white">
-        Add a New Product
-      </h1>
+      <div className="mb-6 text-4xl font-bold text-white">
+        <AnimatedNavLink to="/" text="Add a New Product " />
+      </div>
 
       {/* Display success or error messages */}
       {successMessage && (
@@ -166,7 +195,7 @@ const AddProduct = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="flex w-full max-w-2xl flex-col gap-4"
+        className="flex w-full max-w-2xl flex-col gap-4 text-white"
       >
         {/* Form Fields */}
         <div>
@@ -177,6 +206,7 @@ const AddProduct = () => {
             required
             value={productName}
             onChange={(e) => setProductName(e.target.value)}
+            placeholder="Enter Product Name"
           />
         </div>
 
@@ -197,6 +227,7 @@ const AddProduct = () => {
             required
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
+            placeholder="Quantity"
           />
         </div>
         <div>
@@ -208,6 +239,7 @@ const AddProduct = () => {
             required
             value={price}
             onChange={(e) => setPrice(e.target.value)}
+            placeholder="Price"
           />
         </div>
         <div>
@@ -217,11 +249,12 @@ const AddProduct = () => {
             rows={4}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description"
           />
         </div>
 
         {/* Category Selection */}
-        <div className="flex items-end gap-4">
+        <div className="flex items-end gap-2">
           <div className="flex-grow">
             <Label htmlFor="category" value="Category" />
             <Select
@@ -241,7 +274,11 @@ const AddProduct = () => {
             </Select>
           </div>
 
-          <Button onClick={() => setShowCategoryModal(true)}>New</Button>
+          <Button color="green" onClick={() => setShowCategoryModal(true)}>
+            New
+          </Button>
+
+          <Button onClick={() => setShowManageModel(true)}>Manage</Button>
         </div>
 
         <Button type="submit" disabled={isLoading}>
@@ -265,10 +302,41 @@ const AddProduct = () => {
                 required
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
+                placeholder="Category Name"
               />
             </div>
             <Button type="submit">Save Category</Button>
           </form>
+        </ModalBody>
+      </Modal>
+
+      {/* Modal for Managing Categories */}
+      <Modal show={showManageModel} onClose={() => setShowManageModel(false)}>
+        <ModalHeader>Manage Categories</ModalHeader>
+        <ModalBody>
+          <div className="space-y-2">
+            {categories.length > 0 ? (
+              categories.map((cat) => (
+                <div
+                  key={cat.$id}
+                  className="flex items-center justify-between rounded-l border-2 border-black p-2 text-black bg-white"
+                >
+                  <span>{cat.name}</span>
+                  <Button
+                    color="red"
+                    outline
+                    size="xs"
+                    onClick={() => handleDeleteCategory(cat.$id)}
+                    className="cursor-pointer"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-white">No categories found.</p>
+            )}
+          </div>
         </ModalBody>
       </Modal>
     </div>

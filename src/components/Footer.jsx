@@ -37,7 +37,7 @@ const Footer = () => {
             <IoEarthOutline size={20} />
           </a>
           <a
-            href="https://www.instagram.com/"
+            href="https://www.instagram.com/sameer_._____jain/"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-white transition-colors duration-300"

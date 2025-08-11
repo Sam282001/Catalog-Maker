@@ -5,6 +5,7 @@ import { appwriteConfig, databases } from "../lib/appwrite";
 import { Query } from "appwrite";
 import { Alert, Card, Spinner } from "flowbite-react";
 import { Doughnut } from "react-chartjs-2";
+import AnimatedNavLink from "../components/AnimatedNavLink";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -101,19 +102,21 @@ const Dashboard = () => {
 
   return (
     <div className="p-4 sm:p-8">
-      <h1 className="mb-6 text-3xl font-bold">Dashboard</h1>
+      <div className="flex items-center justify-center mb-6 text-4xl font-bold text-white">
+        <AnimatedNavLink to="" text="Dashboard " />
+      </div>
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 mb-8">
-        <Card>
+        <Card className="dash_card">
           <h2 className="text-3xl font-bold">{stats?.totalProducts}</h2>
           <p className="text-gray-500">Total Products</p>
         </Card>
-        <Card>
+        <Card className="dash_card">
           <h2 className="text-3xl font-bold">{stats?.totalCategories}</h2>
           <p className="text-gray-500">Total Categories</p>
         </Card>
-        <Card>
+        <Card className="dash_card">
           <h2 className="text-3xl font-bold">
             ₹{stats?.totalValue.toFixed(2)}
           </h2>
@@ -122,8 +125,10 @@ const Dashboard = () => {
       </div>
 
       {/* Chart */}
-      <Card>
-        <h2 className="text-xl font-semibold mb-4">Products Per Category</h2>
+      <Card className="dash_card">
+        <h2 className="text-xl font-semibold mb-4 flex justify-center">
+          Products Per Category
+        </h2>
         <div className="mx-auto max-w-sm">
           {chartData && <Doughnut data={chartData} />}
         </div>

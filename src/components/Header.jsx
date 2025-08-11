@@ -9,10 +9,19 @@ import {
   Dropdown,
   DropdownItem,
   DropdownHeader,
+  Avatar,
 } from "flowbite-react";
 import { useAuth } from "../context/AuthContext";
 import { account } from "../lib/appwrite";
 import AnimatedNavLink from "./AnimatedNavLink";
+
+//Helper function to get initials from a name
+const getInitials = (name = "") => {
+  const names = name.split(" ").filter(Boolean);
+  if (names.length === 0) return "?";
+  if (names.length === 1) return names[0].charAt(0).toUpperCase();
+  return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+};
 
 const Header = () => {
   const { user, setUser } = useAuth();
@@ -45,9 +54,11 @@ const Header = () => {
           arrowIcon={false}
           inline
           label={
-            <div className="rounded-full border px-4 py-2 text-sm font-medium hover:bg-gray-700 focus:outline-none border-gray-600 text-white">
-              {user?.name || "Account"}
-            </div>
+            <Avatar
+              alt="User"
+              placeholderInitials={getInitials(user?.name)}
+              rounded
+            />
           }
         >
           <DropdownHeader>

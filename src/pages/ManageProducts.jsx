@@ -22,6 +22,8 @@ import {
 } from "flowbite-react";
 import useDebounce from "../hooks/useDebounce";
 import SearchBar from "../components/SearchBar";
+import ProductCard from "../components/ProductCard";
+import AnimatedNavLink from "../components/AnimatedNavLink";
 
 const ManageProducts = () => {
   const { user } = useAuth();
@@ -155,10 +157,18 @@ const ManageProducts = () => {
         updatedData
       );
 
-      // Update the product in the local state to refresh the UI instantly
+      // Find the full category object from our 'categories' state
+      const newCategory = categories.find(
+        (cat) => cat.$id === updatedProductDoc.category_id
+      );
+      const newCategoryName = newCategory ? newCategory.name : "Unknown";
+
+      // Update the product in the local state, now including the new categoryName
       setProducts(
         products.map((p) =>
-          p.$id === updatedProductDoc.$id ? { ...p, ...updatedProductDoc } : p
+          p.$id === updatedProductDoc.$id
+            ? { ...p, ...updatedProductDoc, categoryName: newCategoryName }
+            : p
         )
       );
       setShowEditModal(false);
@@ -184,7 +194,9 @@ const ManageProducts = () => {
   return (
     <div className="p-4 sm:p-8 min-h-screen">
       <div className="flex flex-col items-center">
-        <h1 className="mb-5 text-4xl font-bold text-white">Manage Products</h1>
+        <div className="mb-6 text-4xl font-bold text-white">
+          <AnimatedNavLink to="" text="Manage Products " />
+        </div>
       </div>
 
       <SearchBar
@@ -202,7 +214,7 @@ const ManageProducts = () => {
         </Alert>
       )}
 
-      <div className="overflow-x-auto">
+      {/* <div className="overflow-x-auto">
         <Table hoverable>
           <TableHead>
             <TableRow>
@@ -255,10 +267,31 @@ const ManageProducts = () => {
         </Table>
         {products.length === 0 && !isLoading && (
           <div className="p-8 text-center text-gray-500">
-            You haven't added any products yet.
+            {searchTerm
+              ? `No products found matching "${searchTerm}".`
+              : "You haven't added any products yet."}
           </div>
         )}
+      </div> */}
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {products.map((product) => (
+          <ProductCard
+            key={product.$id}
+            product={product}
+            onEdit={handleEditClick}
+            onDelete={handleDelete}
+          />
+        ))}
       </div>
+
+      {products.length === 0 && !isLoading && (
+        <div className="p-8 text-center text-gray-500 col-span-full">
+          {searchTerm
+            ? `No products found matching "${searchTerm}".`
+            : "You haven't added any products yet."}
+        </div>
+      )}
 
       {/* Product Edit Modal */}
       <Modal show={showEditModal} onClose={() => setShowEditModal(false)}>
@@ -276,6 +309,7 @@ const ManageProducts = () => {
                   required
                   value={editingProduct.name}
                   onChange={handleEditFormChange}
+                  placeholder="Product Name"
                 />
               </div>
               <div>
@@ -286,6 +320,7 @@ const ManageProducts = () => {
                   required
                   value={editingProduct.quantity}
                   onChange={handleEditFormChange}
+                  placeholder="Quantity"
                 />
               </div>
               <div>
@@ -297,6 +332,7 @@ const ManageProducts = () => {
                   required
                   value={editingProduct.price}
                   onChange={handleEditFormChange}
+                  placeholder="Price"
                 />
               </div>
               <div>
@@ -321,6 +357,7 @@ const ManageProducts = () => {
                   rows={3}
                   value={editingProduct.description}
                   onChange={handleEditFormChange}
+                  placeholder="Description"
                 />
               </div>
               <div className="flex justify-end gap-2">

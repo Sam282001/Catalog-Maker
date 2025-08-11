@@ -141,22 +141,6 @@ const Home = () => {
         Welcome back, {user?.name}
       </h1>
 
-      {/* <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {dashboardItems.map((item) => (
-          <Link to={item.link} key={item.title}>
-            <Card className="h-full !bg-green-500 hover:bg-gray-700">
-              {item.icon}
-              <h2 className="text-2xl font-bold tracking-tight text-white">
-                {item.title}
-              </h2>
-              <p className="font-normal text-gray-700 dark:text-gray-400">
-                {item.description}
-              </p>
-            </Card>
-          </Link>
-        ))}
-      </div> */}
-
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {dashboardItems.map((item) => (
           <Link to={item.link} key={item.title}>

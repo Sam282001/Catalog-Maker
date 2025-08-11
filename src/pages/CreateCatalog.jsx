@@ -17,6 +17,7 @@ import {
   TableHeadCell,
   TableRow,
 } from "flowbite-react";
+import AnimatedNavLink from "../components/AnimatedNavLink";
 
 const CreateCatalog = () => {
   const { user } = useAuth();
@@ -173,10 +174,11 @@ const CreateCatalog = () => {
 
   return (
     <div className="p-4 sm:p-8">
-      <h1 className="mb-6 text-3xl font-bold text-gray-900 dark:text-white">
-        Create a New Catalog
-      </h1>
-      <p className="mb-4 text-black">
+      <div className="flex justify-center mb-6 text-4xl font-bold text-white">
+        <AnimatedNavLink to="" text="Create Catalog " />
+      </div>
+
+      <p className="mb-4 text-white">
         Select the products you want to include in your PDF catalog.
       </p>
 
