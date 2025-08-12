@@ -315,7 +315,8 @@
 /* Cool Form */
 /* -- Cool Form Styles -- */
 .cool-form-container {
-  width: 450px;
+  width: 100%;
+  max-width: 450px;
   --input-focus: #2d8cf0;
   --font-color: #323232;
   --font-color-sub: #666;
