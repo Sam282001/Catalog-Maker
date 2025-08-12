@@ -3,7 +3,7 @@ import { IoEarthOutline } from "react-icons/io5";
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-gray-400 shadow-inner p-4 sm:p-6">
+    <footer className="app-bg text-gray-400 shadow-inner p-4 sm:p-6">
       <div className="container mx-auto flex items-center justify-between">
         {/* Left Side: Copyright */}
         <div className="text-sm">

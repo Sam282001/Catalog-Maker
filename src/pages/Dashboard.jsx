@@ -63,14 +63,14 @@ const Dashboard = () => {
               label: "# of Products",
               data: productsPerCategory.map((c) => c.count),
               backgroundColor: [
-                "rgba(255, 99, 132, 0.7)",
-                "rgba(54, 162, 235, 0.7)",
-                "rgba(255, 206, 86, 0.7)",
-                "rgba(75, 192, 192, 0.7)",
-                "rgba(153, 102, 255, 0.7)",
-                "rgba(255, 159, 64, 0.7)",
+                "#4ade80", // Green
+                "#60a5fa", // Blue
+                "#facc15", // Yellow
+                "#f87171", // Red
+                "#c084fc", // Purple
+                "#fb923c", // Orange
               ],
-              borderColor: "rgba(255, 255, 255, 0.3)",
+              borderColor: "rgba(0, 0, 0, 0.2)",
               borderWidth: 1,
             },
           ],
@@ -110,17 +110,17 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 mb-8">
         <Card className="dash_card">
           <h2 className="text-3xl font-bold">{stats?.totalProducts}</h2>
-          <p className="text-gray-500">Total Products</p>
+          <p className="text-black">Total Products</p>
         </Card>
         <Card className="dash_card">
           <h2 className="text-3xl font-bold">{stats?.totalCategories}</h2>
-          <p className="text-gray-500">Total Categories</p>
+          <p className="text-black">Total Categories</p>
         </Card>
         <Card className="dash_card">
           <h2 className="text-3xl font-bold">
             ₹{stats?.totalValue.toFixed(2)}
           </h2>
-          <p className="text-gray-500">Total Inventory Value</p>
+          <p className="text-black">Total Inventory Value</p>
         </Card>
       </div>
 

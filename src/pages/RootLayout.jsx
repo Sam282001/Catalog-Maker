@@ -4,10 +4,10 @@ import Footer from "../components/Footer";
 
 const RootLayout = () => {
   return (
-    <div className="bg-black min-h-screen">
+    <div className="app-bg min-h-screen">
       <Header />
       <main className="mt-2">
-        {/* Child Pages goes here */}
+        {/* Child Pages */}
         <Outlet />
       </main>
       <Footer />

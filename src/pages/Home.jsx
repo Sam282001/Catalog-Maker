@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Card } from "flowbite-react";
 import ProductCarousel from "../components/ProductCarousel";
 
 import { FaPlus, FaTasks, FaFilePdf, FaSave, FaChartPie } from "react-icons/fa";
@@ -135,7 +134,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="p-4 sm:p-8 min-h-screen bg-black">
+    <div className="p-4 sm:p-8 min-h-screen app-bg">
       {!isLoading && <ProductCarousel images={carouselImages} />}
       <h1 className="mb-6 text-3xl font-bold text-white">
         Welcome back, {user?.name}

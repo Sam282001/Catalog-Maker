@@ -8,9 +8,8 @@ import AddProduct from "./pages/AddProduct";
 import ManageProducts from "./pages/ManageProducts";
 import CreateCatalog from "./pages/CreateCatalog";
 import Dashboard from "./pages/Dashboard";
-
-// const ManageProducts = () => <div>Manage Products</div>;
-// const CreateCatalog = () => <div>Create Catalog</div>;
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -19,6 +18,8 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>

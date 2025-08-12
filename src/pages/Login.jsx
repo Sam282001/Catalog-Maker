@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { account } from "../lib/appwrite";
-import { Button, Card, Label, TextInput } from "flowbite-react";
+import { Alert } from "flowbite-react";
 import { useAuth } from "../context/AuthContext";
+import AuthFormLayout from "../components/AuthFormLayout";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const Login = () => {
   const [error, setError] = useState("");
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleLogin = async (e) => {
@@ -42,59 +43,62 @@ const Login = () => {
     }
   };
 
+  const formTitle = (
+    <>
+      Welcome back,
+      <br />
+      <span>sign in to continue</span>
+    </>
+  );
+
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-gray-900 flex items-center justify-center flex-col">
-      <div className="text-white lg:text-6xl md:text-4xl sm:text-3xl items-center pb-8">
-        Catalog Maker
+    <AuthFormLayout title={formTitle} onSubmit={handleLogin}>
+      <input
+        className="input"
+        name="email"
+        placeholder="Email"
+        type="email"
+        required
+        value={formData.email}
+        onChange={handleInputChange}
+      />
+      <input
+        className="input"
+        name="password"
+        placeholder="Password"
+        type="password"
+        required
+        value={formData.password}
+        onChange={handleInputChange}
+      />
+
+      {error && (
+        <Alert color="failure" className="w-full">
+          {error}
+        </Alert>
+      )}
+
+      <div className="form-link">
+        <Link
+          to="/forgot-password"
+          className="text-sm font-medium text-purple-600 hover:underline"
+        >
+          Forgot Password?
+        </Link>
       </div>
-      <Card className="w-full max-w-md">
-        <form className="flex flex-col gap-4" onSubmit={handleLogin}>
-          <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-            Sign in to your account
-          </h1>
-          <div>
-            <Label htmlFor="email" value="Your email" />
-            <TextInput
-              id="email"
-              type="email"
-              placeholder="name@company.com"
-              required
-              value={formData.email}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <Label htmlFor="password" value="Your password" />
-            <TextInput
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              required
-              value={formData.password}
-              onChange={handleInputChange}
-            />
-          </div>
-          <Button type="submit">Login</Button>
-          {error && (
-            <div
-              className="p-4 mt-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-              role="alert"
-            >
-              {error}
-            </div>
-          )}
-          <div className="text-sm font-light text-gray-500 dark:text-gray-400">
-            Don't have an account yet?{" "}
-            <Link
-              to="/signup"
-              className="font-medium text-purple-600 hover:underline dark:text-purple-500"
-            >
-              Sign up
-            </Link>
-          </div>
-        </form>
-      </Card>
-    </div>
+
+      <button className="button-confirm">Login →</button>
+
+      <div className="form-link">
+        <span>Don't have an account? </span>
+        <Link
+          to="/signup"
+          className="font-medium text-purple-600 hover:underline"
+        >
+          Sign up
+        </Link>
+      </div>
+    </AuthFormLayout>
   );
 };
 

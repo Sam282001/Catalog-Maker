@@ -11,12 +11,6 @@ import {
   ModalHeader,
   Select,
   Spinner,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeadCell,
-  TableRow,
   TextInput,
   Textarea,
 } from "flowbite-react";
@@ -214,67 +208,7 @@ const ManageProducts = () => {
         </Alert>
       )}
 
-      {/* <div className="overflow-x-auto">
-        <Table hoverable>
-          <TableHead>
-            <TableRow>
-              <TableHeadCell>Image</TableHeadCell>
-              <TableHeadCell>Name</TableHeadCell>
-              <TableHeadCell>Category</TableHeadCell>
-              <TableHeadCell>Price</TableHeadCell>
-              <TableHeadCell>Quantity</TableHeadCell>
-              <TableHeadCell>Actions</TableHeadCell>
-            </TableRow>
-          </TableHead>
-          <TableBody className="divide-y">
-            {products.map((product) => (
-              <TableRow
-                key={product.$id}
-                className="bh-white dark:border-gray-700 dark:bg-gray-800"
-              >
-                <TableCell>
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="h-12 w-12 object-cover"
-                  />
-                </TableCell>
-                <TableCell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  {product.name}
-                </TableCell>
-                <TableCell>{product.categoryName}</TableCell>
-                <TableCell>₹{product.price.toFixed(2)}</TableCell>
-                <TableCell>{product.quantity}</TableCell>
-                <TableCell className="flex items-center gap-2">
-                  <Button
-                    size="xs"
-                    color="blue"
-                    onClick={() => handleEditClick(product)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    size="xs"
-                    color="failure"
-                    onClick={() => handleDelete(product.$id, product.image_id)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        {products.length === 0 && !isLoading && (
-          <div className="p-8 text-center text-gray-500">
-            {searchTerm
-              ? `No products found matching "${searchTerm}".`
-              : "You haven't added any products yet."}
-          </div>
-        )}
-      </div> */}
-
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {products.map((product) => (
           <ProductCard
             key={product.$id}

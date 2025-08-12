@@ -2,10 +2,6 @@ import { useNavigate, Link } from "react-router-dom";
 import {
   Navbar,
   NavbarBrand,
-  NavbarCollapse,
-  NavbarLink,
-  NavbarToggle,
-  Button,
   Dropdown,
   DropdownItem,
   DropdownHeader,
@@ -38,7 +34,7 @@ const Header = () => {
   };
 
   return (
-    <Navbar fluid className="dark !bg-black">
+    <Navbar fluid className="dark app-bg sticky top-0 z-50">
       <NavbarBrand as={Link} to="/">
         <img
           src="/logo-trnt.png"
@@ -49,6 +45,12 @@ const Header = () => {
           Catalog Maker
         </span>
       </NavbarBrand>
+
+      {/* This is the new container for your centered link */}
+      <div className="hidden md:flex justify-center flex-grow">
+        <AnimatedNavLink to="/" text="Home" />
+      </div>
+
       <div className="flex md:order-2">
         <Dropdown
           arrowIcon={false}
@@ -69,12 +71,7 @@ const Header = () => {
           </DropdownHeader>
           <DropdownItem onClick={handleLogout}>Sign out</DropdownItem>
         </Dropdown>
-        <NavbarToggle />
       </div>
-      <NavbarCollapse>
-        <AnimatedNavLink to="/" text="Home" />
-        {/*add more links here */}
-      </NavbarCollapse>
     </Navbar>
   );
 };
