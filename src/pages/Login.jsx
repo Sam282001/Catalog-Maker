@@ -39,7 +39,9 @@ const Login = () => {
       navigate("/");
     } catch (err) {
       console.log(err);
-      setError(err.message);
+      setError(
+        "Invalid credentials. Please check your email and password, or sign up."
+      );
     }
   };
 

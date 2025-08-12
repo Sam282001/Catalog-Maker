@@ -1,4 +1,4 @@
-import { BsGithub, BsInstagram, BsLinkedin, BsTwitterX } from "react-icons/bs";
+import { BsGithub, BsInstagram, BsLinkedin } from "react-icons/bs";
 import { IoEarthOutline } from "react-icons/io5";
 
 const Footer = () => {

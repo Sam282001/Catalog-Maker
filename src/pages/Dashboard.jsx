@@ -6,6 +6,7 @@ import { Query } from "appwrite";
 import { Alert, Card, Spinner } from "flowbite-react";
 import { Doughnut } from "react-chartjs-2";
 import AnimatedNavLink from "../components/AnimatedNavLink";
+import Loader from "../components/Loader";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -88,9 +89,10 @@ const Dashboard = () => {
 
   if (isLoading)
     return (
-      <div className="p-8 text-center">
-        <Spinner size="xl" />
-      </div>
+      // <div className="p-8 text-center">
+      //   <Spinner size="xl" />
+      // </div>
+      <Loader />
     );
 
   if (error)

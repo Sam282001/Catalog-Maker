@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { account } from "../lib/appwrite";
 import { Spinner } from "flowbite-react";
+import Loader from "../components/Loader";
 
 const AuthContext = createContext();
 
@@ -27,9 +28,10 @@ export function AuthProvider({ children }) {
   //show fullscreen loader(Spinner) while checking for user
   if (isLoading) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center">
-        <Spinner size="xl" />
-      </div>
+      // <div className="min-h-screen w-full flex items-center justify-center">
+      //   <Spinner size="xl" />
+      // </div>
+      <Loader />
     );
   }
 

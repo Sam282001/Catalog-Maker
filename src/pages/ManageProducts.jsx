@@ -18,6 +18,7 @@ import useDebounce from "../hooks/useDebounce";
 import SearchBar from "../components/SearchBar";
 import ProductCard from "../components/ProductCard";
 import AnimatedNavLink from "../components/AnimatedNavLink";
+import Loader from "../components/Loader";
 
 const ManageProducts = () => {
   const { user } = useAuth();
@@ -179,9 +180,10 @@ const ManageProducts = () => {
 
   if (isLoading) {
     return (
-      <div className="p-8 text-center">
-        <Spinner size="xl" />
-      </div>
+      // <div className="p-8 text-center">
+      //   <Spinner size="xl" />
+      // </div>
+      <Loader />
     );
   }
 
