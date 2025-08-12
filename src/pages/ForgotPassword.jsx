@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { account } from "../lib/appwrite";
-import { Alert, Button, Card, Label, TextInput } from "flowbite-react";
+import { Alert } from "flowbite-react";
 import { Link } from "react-router-dom";
 import AuthFormLayout from "../components/AuthFormLayout";
 
