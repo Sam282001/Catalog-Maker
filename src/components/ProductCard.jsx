@@ -1,10 +1,13 @@
 import { Dropdown, DropdownItem } from "flowbite-react";
 import { HiDotsVertical } from "react-icons/hi";
 
-const ProductCard = ({ product, onEdit, onDelete }) => {
+const ProductCard = ({ product, onEdit, onDelete, onImageClick }) => {
   return (
     <div className="product-card-v2">
-      <div className="img">
+      <div
+        className="img border-b-2"
+        onClick={() => onImageClick(product.imageUrl)}
+      >
         <img src={product.imageUrl} alt={product.name} />
       </div>
 
@@ -17,6 +20,7 @@ const ProductCard = ({ product, onEdit, onDelete }) => {
           {/* Dropdown menu */}
           <div>
             <Dropdown
+              className="!bg-[#212121]"
               inline
               arrowIcon={false}
               label={

@@ -129,18 +129,41 @@ const AddProduct = () => {
     setIsLoading(true);
 
     try {
-      // 1. Upload the image to appwrite storage with permission
-      const imageResponse = await storage.createFile(
-        appwriteConfig.storageBucketId,
-        ID.unique(),
-        productImage,
-        [
-          Permission.read(Role.user(user.$id)), //Allows the user to read the file
-        ]
+      // Prepare data for Cloudinary upload
+      const formData = new FormData();
+      formData.append("file", productImage);
+      formData.append(
+        "upload_preset",
+        import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
       );
-      const imageId = imageResponse.$id;
 
-      // 2. Create the product document in the database
+      const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+
+      // 2. Upload the image to Cloudinary
+      const uploadResponse = await fetch(uploadUrl, {
+        method: "POST",
+        body: formData,
+      });
+      const imageData = await uploadResponse.json();
+      const imageUrl = imageData.secure_url;
+
+      if (!imageUrl) {
+        throw new Error("Image upload failed.");
+      }
+
+      // Upload the image to appwrite storage with permission
+      // const imageResponse = await storage.createFile(
+      //   appwriteConfig.storageBucketId,
+      //   ID.unique(),
+      //   productImage,
+      //   [
+      //     Permission.read(Role.user(user.$id)), //Allows the user to read the file
+      //   ]
+      // );
+      // const imageId = imageResponse.$id;
+
+      // Create the product document in Appwrite with the Cloudinary URL
       await databases.createDocument(
         appwriteConfig.databaseId,
         appwriteConfig.productsCollectionId,
@@ -150,7 +173,8 @@ const AddProduct = () => {
           quantity: parseInt(quantity, 10),
           price: parseFloat(price),
           description,
-          image_id: imageId,
+          // image_id: imageId,
+          image_url: imageUrl,
           category_id: selectedCategory,
           user_id: user.$id,
         }
@@ -173,7 +197,7 @@ const AddProduct = () => {
       setIsLoading(false);
     }
 
-    console.log("Form Submitted");
+    // console.log("Form Submitted");
   };
 
   return (

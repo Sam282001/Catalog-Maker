@@ -37,13 +37,13 @@ const Header = () => {
     <Navbar fluid className="dark app-bg sticky top-0 z-50">
       <NavbarBrand as={Link} to="/">
         <img
-          src="/logo-trnt.png"
+          src="/logo-new.png"
           className="mr-3 h-11"
           alt="Catalog Maker Logo"
         />
-        <span className="self-center whitespace-nowrap text-xl font-semibold text-white">
+        {/* <span className="self-center whitespace-nowrap text-xl font-semibold text-white">
           Catalog Maker
-        </span>
+        </span> */}
       </NavbarBrand>
 
       {/* This is the new container for your centered link */}

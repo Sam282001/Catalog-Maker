@@ -141,7 +141,7 @@ export default ResetPassword;
 
 // <div className="min-h-screen bg-black flex flex-col items-center justify-center">
 //   <div className="flex items-center justify-center pb-8">
-//     <img src="/logo-bgrm.png" alt="logo" className="h-24 w-auto" />
+//     <img src="/logo-new.png" alt="logo" className="h-24 w-auto" />
 //   </div>
 //   <Card className="w-full max-w-md">
 //     <form className="flex flex-col gap-4" onSubmit={handleReset}>

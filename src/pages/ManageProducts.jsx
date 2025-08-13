@@ -19,6 +19,7 @@ import SearchBar from "../components/SearchBar";
 import ProductCard from "../components/ProductCard";
 import AnimatedNavLink from "../components/AnimatedNavLink";
 import Loader from "../components/Loader";
+import PopImgModal from "../components/PopImgModal";
 
 const ManageProducts = () => {
   const { user } = useAuth();
@@ -38,6 +39,10 @@ const ManageProducts = () => {
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+
+  // State for the image pop-up modal
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState("");
 
   useEffect(() => {
     const fetchProductsAndCategories = async () => {
@@ -75,10 +80,10 @@ const ManageProducts = () => {
 
         // Process the products with their image URLs and category names
         const productsWithDetails = productRes.documents.map((product) => {
-          const imageUrl = `${appwriteConfig.endpoint}/storage/buckets/${appwriteConfig.storageBucketId}/files/${product.image_id}/view?project=${appwriteConfig.projectId}`;
+          // const imageUrl = `${appwriteConfig.endpoint}/storage/buckets/${appwriteConfig.storageBucketId}/files/${product.image_id}/view?project=${appwriteConfig.projectId}`;
           return {
             ...product,
-            imageUrl: imageUrl,
+            imageUrl: product.image_url,
             categoryName: categoryMap[product.category_id] || "Unknown",
           };
         });
@@ -95,7 +100,8 @@ const ManageProducts = () => {
     fetchProductsAndCategories();
   }, [user.$id, debouncedSearchTerm, filterCategory]); // Re-fetch when user, search, or filter changes
 
-  const handleDelete = async (productId, imageId) => {
+  const handleDelete = async (productId) => {
+    //imageId parameter removed
     if (!window.confirm("Are you sure you want to delete this product?")) {
       return;
     }
@@ -109,7 +115,7 @@ const ManageProducts = () => {
       );
 
       //Then delete associated image from file storage
-      await storage.deleteFile(appwriteConfig.storageBucketId, imageId);
+      // await storage.deleteFile(appwriteConfig.storageBucketId, imageId);
 
       //Update the UI by removing deleted product from state
       setProducts(products.filter((p) => p.$id !== productId));
@@ -178,6 +184,11 @@ const ManageProducts = () => {
     setShowFilterModal(false); // Close the modal
   };
 
+  const handleImageClick = (imageUrl) => {
+    setSelectedImageUrl(imageUrl);
+    setShowImageModal(true);
+  };
+
   if (isLoading) {
     return (
       // <div className="p-8 text-center">
@@ -217,6 +228,7 @@ const ManageProducts = () => {
             product={product}
             onEdit={handleEditClick}
             onDelete={handleDelete}
+            onImageClick={handleImageClick}
           />
         ))}
       </div>
@@ -331,6 +343,14 @@ const ManageProducts = () => {
           </div>
         </ModalBody>
       </Modal>
+
+      {/* Image Pop-up Modal */}
+      <PopImgModal
+        show={showImageModal}
+        onClose={() => setShowImageModal(false)}
+        imageUrl={selectedImageUrl}
+        altText="Product Image"
+      />
     </div>
   );
 };

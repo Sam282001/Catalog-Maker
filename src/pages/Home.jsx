@@ -38,15 +38,22 @@ const Home = () => {
           [Query.equal("user_id", user.$id), Query.limit(10)] //// Get up to 10 products
         );
 
+        // if (response.documents.length > 0) {
+        //   const imageUrls = response.documents.map(
+        //     (product) =>
+        //       `${appwriteConfig.endpoint}/storage/buckets/${appwriteConfig.storageBucketId}/files/${product.image_id}/view?project=${appwriteConfig.projectId}`
+        //   );
+        //   setCarouselImages(imageUrls);
+        // }
+
+        //If no products, it will show sample images
+
         if (response.documents.length > 0) {
           const imageUrls = response.documents.map(
-            (product) =>
-              `${appwriteConfig.endpoint}/storage/buckets/${appwriteConfig.storageBucketId}/files/${product.image_id}/view?project=${appwriteConfig.projectId}`
+            (product) => product.image_url
           );
           setCarouselImages(imageUrls);
         }
-
-        //If no products, it will show sample images
       } catch (error) {
         console.error("Failed to fetch product images for carousel:", error);
       } finally {

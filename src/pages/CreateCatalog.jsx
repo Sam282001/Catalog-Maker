@@ -56,10 +56,10 @@ const CreateCatalog = () => {
 
         // Manually construct the direct URL to the raw file
         const productsWithDetails = productRes.documents.map((product) => {
-          const imageUrl = `${appwriteConfig.endpoint}/storage/buckets/${appwriteConfig.storageBucketId}/files/${product.image_id}/view?project=${appwriteConfig.projectId}`;
+          // const imageUrl = `${appwriteConfig.endpoint}/storage/buckets/${appwriteConfig.storageBucketId}/files/${product.image_id}/view?project=${appwriteConfig.projectId}`;
           return {
             ...product,
-            imageUrl: imageUrl,
+            imageUrl: product.image_url,
             categoryName: categoryMap[product.category_id] || "Unknown",
           };
         });
