@@ -179,7 +179,7 @@ const AddProduct = () => {
   return (
     <div className="p-4 sm:p-8 flex flex-col items-center min-h-screen">
       <div className="mb-6 text-4xl font-bold text-white">
-        <AnimatedNavLink to="/" text="Add a New Product " />
+        <AnimatedNavLink to="" text="Add a New Product " />
       </div>
 
       {/* Display success or error messages */}
