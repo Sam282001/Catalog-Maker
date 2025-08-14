@@ -244,6 +244,8 @@
   overflow: hidden;
   position: relative;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
 }
 .product-card-v2:hover {
   /* transform: translateY(-5px);
@@ -266,6 +268,9 @@
 }
 .product-card-v2 .info {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 .product-card-v2 .cat {
   font-size: 11px;
@@ -294,6 +299,7 @@
   -webkit-line-clamp: 3;
   line-clamp: 3;
   -webkit-box-orient: vertical;
+  flex-grow: 1;
 }
 .product-card-v2 .bottom {
   display: flex;
@@ -310,7 +316,7 @@
 .product-card-v2 .stock {
   font-size: 11px;
   font-weight: 600;
-  color: #22c55e;
+  color: black;
 }
 @media (max-width: 400px) {
   .product-card-v2 {
@@ -715,6 +721,27 @@
   to {
     transform: rotate(-1turn);
   }
+}
+
+/* --- Custom Pagination Styles for Dark Theme --- */
+
+/* Targets all buttons (Previous, Next, Numbers) */
+div[data-testid="pagination"] button {
+  background-color: #374151; /* bg-gray-700 */
+  border-color: #4b5563; /* border-gray-600 */
+  color: #d1d5db; /* text-gray-300 */
+}
+
+/* Targets the CURRENT/ACTIVE page number button */
+div[data-testid="pagination"] button[aria-current="page"] {
+  background-color: #4b5563; /* bg-gray-600 */
+  color: #ffffff; /* text-white */
+}
+
+/* Targets the HOVER state for non-active buttons */
+div[data-testid="pagination"] button:not([aria-current="page"]):hover {
+  background-color: #4b5563; /* bg-gray-600 */
+  color: #ffffff;
 }
 
 /* Others */

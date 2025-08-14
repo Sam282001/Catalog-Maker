@@ -29,7 +29,7 @@ const Dashboard = () => {
           databases.listDocuments(
             appwriteConfig.databaseId,
             appwriteConfig.productsCollectionId,
-            [Query.equal("user_id", user.$id)]
+            [Query.equal("user_id", user.$id), Query.limit(100)] //100 products fetching limit
           ),
         ]);
 

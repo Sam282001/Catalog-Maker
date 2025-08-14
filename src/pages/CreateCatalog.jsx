@@ -9,6 +9,11 @@ import {
   Alert,
   Button,
   Checkbox,
+  Label,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  Select,
   Spinner,
   Table,
   TableBody,
@@ -20,6 +25,8 @@ import {
 import AnimatedNavLink from "../components/AnimatedNavLink";
 import { Link } from "react-router-dom";
 import Loader from "../components/Loader";
+import useDebounce from "../hooks/useDebounce";
+import SearchBar from "../components/SearchBar";
 
 const CreateCatalog = () => {
   const { user } = useAuth();
@@ -27,8 +34,18 @@ const CreateCatalog = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
+  // State for filter categories
+  const [categories, setCategories] = useState([]);
+  const [filterCategory, setFilterCategory] = useState("");
+  const [tempFilterCategory, setTempFilterCategory] = useState("");
+  const [showFilterModal, setShowFilterModal] = useState(false);
+
   //State to track selected Products IDs
   const [selectedProducts, setSelectedProducts] = useState([]);
+
+  // Add state for the search term
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -45,18 +62,28 @@ const CreateCatalog = () => {
           return map;
         }, {});
 
-        // setCategories(categoryRes.documents);
+        setCategories(categoryRes.documents);
+
+        // Dynamically build the query for products
+        const queries = [Query.equal("user_id", user.$id)];
+        if (debouncedSearchTerm) {
+          queries.push(Query.search("name", debouncedSearchTerm));
+        }
+        if (filterCategory) {
+          queries.push(Query.equal("category_id", filterCategory));
+        }
+        queries.push(Query.limit(100)); //Fetching limit - 100 products from appwrite
 
         // Then, fetch all products
         const productRes = await databases.listDocuments(
           appwriteConfig.databaseId,
           appwriteConfig.productsCollectionId,
-          [Query.equal("user_id", user.$id)]
+          queries
+          // [Query.equal("user_id", user.$id), Query.limit(100)] //Fetching limit - 100 products from appwrite
         );
 
         // Manually construct the direct URL to the raw file
         const productsWithDetails = productRes.documents.map((product) => {
-          // const imageUrl = `${appwriteConfig.endpoint}/storage/buckets/${appwriteConfig.storageBucketId}/files/${product.image_id}/view?project=${appwriteConfig.projectId}`;
           return {
             ...product,
             imageUrl: product.image_url,
@@ -74,7 +101,13 @@ const CreateCatalog = () => {
     };
 
     fetchProducts();
-  }, [user.$id]);
+  }, [user.$id, debouncedSearchTerm, filterCategory]);
+
+  // handle filter apply
+  const handleApplyFilters = () => {
+    setFilterCategory(tempFilterCategory);
+    setShowFilterModal(false);
+  };
 
   //handle product selection
   const handleProductSelect = (productId) => {
@@ -181,6 +214,15 @@ const CreateCatalog = () => {
         <AnimatedNavLink to="" text="Create Catalog " />
       </div>
 
+      <SearchBar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        onFilterClick={() => {
+          setTempFilterCategory(filterCategory);
+          setShowFilterModal(true);
+        }}
+      />
+
       {products.length > 0 ? (
         <>
           <p className="mb-4 text-white">
@@ -268,6 +310,31 @@ const CreateCatalog = () => {
           </Button>
         </div>
       )}
+
+      {/* Filter Modal */}
+      <Modal show={showFilterModal} onClose={() => setShowFilterModal(false)}>
+        <ModalHeader>Filter Products</ModalHeader>
+        <ModalBody>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="tempFilterCategory" value="Filter by Category" />
+              <Select
+                id="tempFilterCategory"
+                value={tempFilterCategory}
+                onChange={(e) => setTempFilterCategory(e.target.value)}
+              >
+                <option value="">All Categories</option>
+                {categories.map((cat) => (
+                  <option key={cat.$id} value={cat.$id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <Button onClick={handleApplyFilters}>Apply</Button>
+          </div>
+        </ModalBody>
+      </Modal>
     </div>
   );
 };

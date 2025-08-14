@@ -5,6 +5,7 @@ import { Query } from "appwrite";
 import {
   Alert,
   Button,
+  FileInput,
   Label,
   Modal,
   ModalBody,
@@ -20,6 +21,9 @@ import ProductCard from "../components/ProductCard";
 import AnimatedNavLink from "../components/AnimatedNavLink";
 import Loader from "../components/Loader";
 import PopImgModal from "../components/PopImgModal";
+import CustomPagination from "../components/CustomPagination";
+
+const PRODUCTS_PER_PAGE = 12;
 
 const ManageProducts = () => {
   const { user } = useAuth();
@@ -40,9 +44,16 @@ const ManageProducts = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
 
+  //State for pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+
   // State for the image pop-up modal
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState("");
+
+  // State for Editing Product Image
+  const [newProductImage, setNewProductImage] = useState(null);
 
   useEffect(() => {
     const fetchProductsAndCategories = async () => {
@@ -71,12 +82,19 @@ const ManageProducts = () => {
           queries.push(Query.equal("category_id", filterCategory));
         }
 
+        // limit and offset for pagination
+        queries.push(Query.limit(PRODUCTS_PER_PAGE));
+        queries.push(Query.offset((currentPage - 1) * PRODUCTS_PER_PAGE));
+
         // Fetch the products using the dynamic query
         const productRes = await databases.listDocuments(
           appwriteConfig.databaseId,
           appwriteConfig.productsCollectionId,
           queries
         );
+
+        // total products for pagination controls
+        setTotalProducts(productRes.total);
 
         // Process the products with their image URLs and category names
         const productsWithDetails = productRes.documents.map((product) => {
@@ -98,7 +116,7 @@ const ManageProducts = () => {
     };
 
     fetchProductsAndCategories();
-  }, [user.$id, debouncedSearchTerm, filterCategory]); // Re-fetch when user, search, or filter changes
+  }, [user.$id, debouncedSearchTerm, filterCategory, currentPage]); // Re-fetch when user, search, or filter changes
 
   const handleDelete = async (productId) => {
     //imageId parameter removed
@@ -127,6 +145,7 @@ const ManageProducts = () => {
 
   const handleEditClick = (product) => {
     setEditingProduct(product);
+    setNewProductImage(null);
     setShowEditModal(true);
   };
 
@@ -137,20 +156,88 @@ const ManageProducts = () => {
     });
   };
 
+  // const handleUpdateProduct = async (e) => {
+  //   e.preventDefault();
+  //   if (!editingProduct) return;
+
+  //   const { name, quantity, price, description, category_id } = editingProduct;
+  //   const updatedData = {
+  //     name,
+  //     quantity: parseInt(quantity, 10),
+  //     price: parseFloat(price),
+  //     description,
+  //     category_id,
+  //   };
+
+  //   try {
+  //     const updatedProductDoc = await databases.updateDocument(
+  //       appwriteConfig.databaseId,
+  //       appwriteConfig.productsCollectionId,
+  //       editingProduct.$id,
+  //       updatedData
+  //     );
+
+  //     // Find the full category object from our 'categories' state
+  //     const newCategory = categories.find(
+  //       (cat) => cat.$id === updatedProductDoc.category_id
+  //     );
+  //     const newCategoryName = newCategory ? newCategory.name : "Unknown";
+
+  //     // Update the product in the local state, now including the new categoryName
+  //     setProducts(
+  //       products.map((p) =>
+  //         p.$id === updatedProductDoc.$id
+  //           ? { ...p, ...updatedProductDoc, categoryName: newCategoryName }
+  //           : p
+  //       )
+  //     );
+  //     setShowEditModal(false);
+  //   } catch (err) {
+  //     console.error("Failed to update product:", err);
+  //     setError("Failed to update product.");
+  //   }
+  // };
+
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     if (!editingProduct) return;
 
-    const { name, quantity, price, description, category_id } = editingProduct;
-    const updatedData = {
-      name,
-      quantity: parseInt(quantity, 10),
-      price: parseFloat(price),
-      description,
-      category_id,
-    };
-
     try {
+      let imageUrl = editingProduct.image_url; // 1. Start with the existing image URL
+
+      // 2. Check if a new image was selected and upload it to Cloudinary
+      if (newProductImage) {
+        const formData = new FormData();
+        formData.append("file", newProductImage);
+        formData.append(
+          "upload_preset",
+          import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+        );
+
+        const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+        const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+
+        const uploadResponse = await fetch(uploadUrl, {
+          method: "POST",
+          body: formData,
+        });
+        const imageData = await uploadResponse.json();
+        imageUrl = imageData.secure_url; // Get the new URL
+      }
+
+      // 3. Prepare the data for Appwrite (now including the image URL)
+      const { name, quantity, price, description, category_id } =
+        editingProduct;
+      const updatedData = {
+        name,
+        quantity: parseInt(quantity, 10),
+        price: parseFloat(price),
+        description,
+        category_id,
+        image_url: imageUrl, // Use the new URL (or the old one if no new image was uploaded)
+      };
+
+      // 4. Update the document in Appwrite
       const updatedProductDoc = await databases.updateDocument(
         appwriteConfig.databaseId,
         appwriteConfig.productsCollectionId,
@@ -158,17 +245,21 @@ const ManageProducts = () => {
         updatedData
       );
 
-      // Find the full category object from our 'categories' state
+      // 5. Update the UI state instantly (now including the new imageUrl)
       const newCategory = categories.find(
         (cat) => cat.$id === updatedProductDoc.category_id
       );
       const newCategoryName = newCategory ? newCategory.name : "Unknown";
 
-      // Update the product in the local state, now including the new categoryName
       setProducts(
         products.map((p) =>
           p.$id === updatedProductDoc.$id
-            ? { ...p, ...updatedProductDoc, categoryName: newCategoryName }
+            ? {
+                ...p,
+                ...updatedProductDoc,
+                categoryName: newCategoryName,
+                imageUrl: imageUrl,
+              }
             : p
         )
       );
@@ -241,6 +332,17 @@ const ManageProducts = () => {
         </div>
       )}
 
+      {/* Pagination Component */}
+      {totalProducts > PRODUCTS_PER_PAGE && (
+        <div className="flex justify-center mt-8">
+          <CustomPagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(totalProducts / PRODUCTS_PER_PAGE)}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+      )}
+
       {/* Product Edit Modal */}
       <Modal show={showEditModal} onClose={() => setShowEditModal(false)}>
         <ModalHeader>Edit Product</ModalHeader>
@@ -260,6 +362,18 @@ const ManageProducts = () => {
                   placeholder="Product Name"
                 />
               </div>
+
+              <div>
+                <Label
+                  htmlFor="newProductImage"
+                  value="Replace Image (Optional)"
+                />
+                <FileInput
+                  id="newProductImage"
+                  onChange={(e) => setNewProductImage(e.target.files[0])}
+                />
+              </div>
+
               <div>
                 <Label htmlFor="quantity" value="Quantity" />
                 <TextInput
