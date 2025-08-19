@@ -5,6 +5,8 @@ import { Query } from "appwrite";
 import {
   Alert,
   Button,
+  Dropdown,
+  DropdownItem,
   FileInput,
   Label,
   Modal,
@@ -22,6 +24,9 @@ import AnimatedNavLink from "../components/AnimatedNavLink";
 import Loader from "../components/Loader";
 import PopImgModal from "../components/PopImgModal";
 import CustomPagination from "../components/CustomPagination";
+import { FaFilter } from "react-icons/fa";
+import CustomSortDropdown from "../components/SortDropdown";
+import SortDropdown from "../components/SortDropdown";
 
 const PRODUCTS_PER_PAGE = 12;
 
@@ -55,6 +60,16 @@ const ManageProducts = () => {
   // State for Editing Product Image
   const [newProductImage, setNewProductImage] = useState(null);
 
+  //State for sort products
+  const [sortOption, setSortOption] = useState("date_desc");
+
+  const sortOptions = [
+    { value: "date_desc", label: "Date Added (Newest)" },
+    { value: "date_asc", label: "Date Added (Oldest)" },
+    { value: "name_asc", label: "Alphabetical (A-Z)" },
+    { value: "name_desc", label: "Alphabetical (Z-A)" },
+  ];
+
   useEffect(() => {
     const fetchProductsAndCategories = async () => {
       setIsLoading(true);
@@ -80,6 +95,22 @@ const ManageProducts = () => {
         }
         if (filterCategory) {
           queries.push(Query.equal("category_id", filterCategory));
+        }
+
+        // Add sorting to the query
+        switch (sortOption) {
+          case "date_asc":
+            queries.push(Query.orderAsc("$createdAt"));
+            break;
+          case "name_asc":
+            queries.push(Query.orderAsc("name"));
+            break;
+          case "name_desc":
+            queries.push(Query.orderDesc("name"));
+            break;
+          default: // date_desc
+            queries.push(Query.orderDesc("$createdAt"));
+            break;
         }
 
         // limit and offset for pagination
@@ -116,7 +147,7 @@ const ManageProducts = () => {
     };
 
     fetchProductsAndCategories();
-  }, [user.$id, debouncedSearchTerm, filterCategory, currentPage]); // Re-fetch when user, search, or filter changes
+  }, [user.$id, debouncedSearchTerm, filterCategory, currentPage, sortOption]); // Re-fetch when user, search, or filter changes
 
   const handleDelete = async (productId) => {
     //imageId parameter removed
@@ -297,14 +328,38 @@ const ManageProducts = () => {
         </div>
       </div>
 
-      <SearchBar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        onFilterClick={() => {
-          setTempFilterCategory(filterCategory);
-          setShowFilterModal(true);
-        }}
-      />
+      <div className="flex flex-col items-center gap-4 mb-8">
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          onFilterClick={() => {
+            setTempFilterCategory(filterCategory);
+            setShowFilterModal(true);
+          }}
+        />
+        {/* <div>
+          <Label htmlFor="sort" value="Sort by" className="sr-only" />
+          <Select
+            id="sort"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+            className="w-full sm:w-auto"
+          >
+            <option value="date_desc">Date Added (Newest)</option>
+            <option value="date_asc">Date Added (Oldest)</option>
+            <option value="name_asc">Alphabetical (A-Z)</option>
+            <option value="name_desc">Alphabetical (Z-A)</option>
+          </Select>
+        </div> */}
+
+        <div className="w-full flex justify-end">
+          <SortDropdown
+            options={sortOptions}
+            value={sortOption}
+            onChange={setSortOption}
+          />
+        </div>
+      </div>
 
       {error && (
         <Alert color="failure" onDismiss={() => setError("")} className="mb-4">

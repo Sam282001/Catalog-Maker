@@ -137,9 +137,22 @@ const CreateCatalog = () => {
     const selectedProductsData = products.filter((p) =>
       selectedProducts.includes(p.$id)
     );
+
+    const loadImage = (product) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.onload = () => resolve({ img, product });
+        img.onerror = (err) => reject(err);
+        img.src = product.imageUrl;
+      });
+    };
+
+    const loadedImages = await Promise.all(selectedProductsData.map(loadImage));
+
     doc.text("Product Catalog", 14, 16);
 
-    const tableColumn = ["Image", "Name", "Category", "Price (₹)", "Quantity"];
+    const tableColumn = ["Image", "Name", "Category", "Price", "Quantity"];
     const tableRows = [];
 
     // 1. Prepare the text data for the table, leaving a placeholder for images
@@ -159,40 +172,59 @@ const CreateCatalog = () => {
       head: [tableColumn],
       body: tableRows,
       startY: 20,
+      styles: { valign: "middle" },
+      minCellHeight: 30,
 
       //Using didDrawCell hook to add images
       didDrawCell: function (data) {
-        //Only draw on the 'image' column in table body
         if (data.column.index === 0 && data.row.section === "body") {
-          const product = selectedProductsData[data.row.index];
-          if (product && product.imageUrl) {
-            try {
-              //Create a new img obj to ensure it's loaded
-              const img = new Image();
-              img.src = product.imageUrl;
-
-              //Use cell's dimension to draw image
-              doc.addImage(
-                img,
-                "JPEG",
-                data.cell.x + 2,
-                data.cell.y + 2,
-                15,
-                15
-              );
-            } catch (error) {
-              console.log(
-                `Could not add image for product: ${product.name}`,
-                error
-              );
-            }
+          // Find the pre-loaded image and draw it
+          const loadedItem = loadedImages[data.row.index];
+          if (loadedItem) {
+            const cellHeight = data.cell.height - 4;
+            doc.addImage(
+              loadedItem.img,
+              "JPEG",
+              data.cell.x + 2,
+              data.cell.y + 2,
+              cellHeight,
+              cellHeight
+            );
           }
         }
+        //Only draw on the 'image' column in table body
+        // if (data.column.index === 0 && data.row.section === "body") {
+        //   const product = selectedProductsData[data.row.index];
+        //   if (product && product.imageUrl) {
+        //     try {
+        //       //Create a new img obj to ensure it's loaded
+        //       const img = new Image();
+        //       img.crossOrigin = "Anonymous";
+        //       img.src = product.imageUrl;
+
+        //       //Use cell's dimension to draw image
+        //       const cellHeight = data.cell.height - 4;
+        //       doc.addImage(
+        //         img,
+        //         "JPEG",
+        //         data.cell.x + 2,
+        //         data.cell.y + 2,
+        //         cellHeight,
+        //         cellHeight
+        //       );
+        //     } catch (error) {
+        //       console.log(
+        //         `Could not add image for product: ${product.name}`,
+        //         error
+        //       );
+        //     }
+        //   }
+        // }
       },
 
       //margin to the image for better spacing
       columnStyles: {
-        0: { cellWidth: 20 },
+        0: { cellWidth: 32 },
       },
     });
 

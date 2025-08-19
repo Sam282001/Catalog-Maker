@@ -35,7 +35,7 @@ const Home = () => {
         const response = await databases.listDocuments(
           appwriteConfig.databaseId,
           appwriteConfig.productsCollectionId,
-          [Query.equal("user_id", user.$id), Query.limit(10)] //// Get up to 10 products
+          [Query.equal("user_id", user.$id), Query.limit(100)] //// Get up to 100 products
         );
 
         // if (response.documents.length > 0) {
@@ -49,9 +49,16 @@ const Home = () => {
         //If no products, it will show sample images
 
         if (response.documents.length > 0) {
-          const imageUrls = response.documents.map(
-            (product) => product.image_url
-          );
+          const allProducts = response.documents;
+
+          for (let i = allProducts.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allProducts[i], allProducts[j]] = [allProducts[j], allProducts[i]];
+          }
+
+          const randomProducts = allProducts.slice(0, 10);
+
+          const imageUrls = randomProducts.map((product) => product.image_url);
           setCarouselImages(imageUrls);
         }
       } catch (error) {
