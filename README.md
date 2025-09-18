@@ -1,6 +1,6 @@
 # 📖 Catalog Maker
 
-Catalog Maker is a full-stack web application that helps small business owners and individuals effortlessly manage product inventory and generate professional PDF catalogs on the fly.
+A full-stack web application that helps small business owners and individuals effortlessly manage product inventory and generate professional PDF catalogs on the fly.
 
 This application provides a secure, user-specific environment where all product data is kept private. From adding new items with images to viewing inventory analytics, Catalog Maker is a complete solution built with a modern, performant, and scalable tech stack.
 
